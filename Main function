@@ -1,0 +1,23 @@
+    static func loginInWithGoogle(with viewController: UIViewController)  {
+        guard let _ = FirebaseApp.app()?.options.clientID else { return }
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: viewController) { user, error in
+            if let error = error {
+                print("Google Sign-In error: \(error.localizedDescription)")
+                return
+            }
+            // User is signed in successfully
+            guard  let idToken = user?.user.idToken,
+                   let accessToken = user?.user.accessToken else {
+                print("Google Sign-In failed: No authentication data")
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
+                                                           accessToken: accessToken.tokenString)
+            
+            let services = Services()
+            services.signIn(with: credential)
+        }
+        
+    }
